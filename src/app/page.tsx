@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-export const EmailForm = () => {
+const EmailForm = () => {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -42,7 +42,7 @@ export const EmailForm = () => {
       formDataToSend.append('file', file);
     }
 
-    const response = await fetch('/api/sendmail', { // Ensure the correct path
+    const response = await fetch('/api/sendmail', {
       method: 'POST',
       body: formDataToSend,
     });
