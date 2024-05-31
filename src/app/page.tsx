@@ -57,10 +57,10 @@ const EmailForm = () => {
         <div className="relative px-4 w-full lg-w-1/2">
           <div className="container relative mx-auto my-4 w-full max-w-7xl sm:my-10">
             <div className="text-center">
-              <h2 className="lg:text-[50px] text-[40px] text-[#C00000] freestyle font-bold tracking-tight">
+              <h2 className="freestyle lg:text-[50px] text-[40px] text-[#C00000] freestyle font-bold tracking-tight">
                 Soumettez Votre Candidature
               </h2>
-              <p className="lg:text-[16px] text-[14px] leading-8 text-[#7A7A7A]">
+              <p className="calibri lg:text-[16px] text-[14px] leading-8 text-[#7A7A7A]">
                 Remplissez le formulaire et déposez votre CV
               </p>
             </div>

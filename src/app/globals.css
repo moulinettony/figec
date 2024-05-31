@@ -2,6 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: "calibri";
+  src: url(https://dopweb-repository.s3-us-west-2.amazonaws.com/figec/mydop-files/calibri-regular.ttf) format("woff2")
+}
+
+@font-face {
+  font-family:"freestyle";
+  src:url(https://dopweb-repository.s3-us-west-2.amazonaws.com/figec/mydop-files/29733748199.ttf) format("woff2")
+}
+
+.calibri{
+  font-family: "calibri";
+}
+
+.freestyle{
+  font-family: "freestyle";
+}
+
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
