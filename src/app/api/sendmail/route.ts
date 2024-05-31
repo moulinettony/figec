@@ -8,11 +8,7 @@ import { IncomingMessage } from 'http';
 
 const resend = new Resend('re_9ET6YxZ9_7pDf8FrDpdj6VE2SJmGDdUmA');
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
+export const dynamic = 'force-dynamic';
 
 const streamToBuffer = async (stream: ReadableStream<Uint8Array>): Promise<Buffer> => {
   const reader = stream.getReader();
@@ -33,7 +29,7 @@ const convertNextRequestToIncomingMessage = async (req: NextRequest): Promise<In
   const incomingMessage = new Readable() as IncomingMessage;
 
   incomingMessage._read = () => {};
-  
+
   if (req.body) {
     const buffer = await streamToBuffer(req.body as ReadableStream<Uint8Array>);
     incomingMessage.push(buffer);
@@ -69,28 +65,28 @@ const parseForm = async (req: NextRequest): Promise<{ fields: Fields; files: Fil
   });
 };
 
+const getFieldValue = (field: string | string[] | undefined): string => {
+  if (Array.isArray(field)) {
+    return field[0] || '';
+  }
+  return field || '';
+};
+
 export async function POST(req: NextRequest) {
   try {
     const { fields, files } = await parseForm(req);
 
-    const getFieldValue = (field: string | string[] | undefined): string => {
-      if (Array.isArray(field)) {
-        return field[0] || '';
-      }
-      return field || '';
-    };
-
-    const firstName = getFieldValue(fields.firstName as string | string[]);
-    const lastName = getFieldValue(fields.lastName as string | string[]);
-    const adresse = getFieldValue(fields.adresse as string | string[]);
-    const ville = getFieldValue(fields.ville as string | string[]);
-    const codePostal = getFieldValue(fields.codePostal as string | string[]);
-    const email = getFieldValue(fields.email as string | string[]);
-    const telephone = getFieldValue(fields.telephone as string | string[]);
-    const anneesExperiences = getFieldValue(fields.anneesExperiences as string | string[]);
-    const domaineExpertise = getFieldValue(fields.domaineExpertise as string | string[]);
-    const posteDesire = getFieldValue(fields.posteDesire as string | string[]);
-    const message = getFieldValue(fields.message as string | string[]);
+    const firstName = getFieldValue(fields.firstName);
+    const lastName = getFieldValue(fields.lastName);
+    const adresse = getFieldValue(fields.adresse);
+    const ville = getFieldValue(fields.ville);
+    const codePostal = getFieldValue(fields.codePostal);
+    const email = getFieldValue(fields.email);
+    const telephone = getFieldValue(fields.telephone);
+    const anneesExperiences = getFieldValue(fields.anneesExperiences);
+    const domaineExpertise = getFieldValue(fields.domaineExpertise);
+    const posteDesire = getFieldValue(fields.posteDesire);
+    const message = getFieldValue(fields.message);
 
     const file = files.file ? (Array.isArray(files.file) ? files.file[0] : files.file) : null;
 
@@ -106,7 +102,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    const response = await resend.emails.send({
+    const emailResponse = await resend.emails.send({
       from: 'onboarding@resend.dev',
       to: 'amine@dopweb.com',
       subject: 'New Submission',
@@ -126,7 +122,7 @@ export async function POST(req: NextRequest) {
       attachments: attachments.length > 0 ? attachments : undefined,
     });
 
-    return NextResponse.json({ success: true, response });
+    return NextResponse.json({ success: true, response: emailResponse });
   } catch (error) {
     console.error('Error sending email:', error);
 
