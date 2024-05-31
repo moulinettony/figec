@@ -1,24 +1,29 @@
 "use client";
 
-import { useState } from 'react';
+import { useState } from "react";
+import Modal from '../components/successpopup';
 
 const EmailForm = () => {
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    adresse: '',
-    ville: '',
-    codePostal: '',
-    email: '',
-    telephone: '',
-    anneesExperiences: '',
-    domaineExpertise: '',
-    posteDesire: '',
-    message: ''
+    firstName: "",
+    lastName: "",
+    adresse: "",
+    ville: "",
+    codePostal: "",
+    email: "",
+    telephone: "",
+    anneesExperiences: "",
+    domaineExpertise: "",
+    posteDesire: "",
+    message: "",
   });
   const [file, setFile] = useState<File | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState<string | null>(null);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
@@ -31,6 +36,8 @@ const EmailForm = () => {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+    setIsModalOpen(false);
+    setModalMessage(null);
 
     const formDataToSend = new FormData();
     for (const key in formData) {
@@ -39,16 +46,39 @@ const EmailForm = () => {
       }
     }
     if (file) {
-      formDataToSend.append('file', file);
+      formDataToSend.append("file", file);
     }
 
-    const response = await fetch('/api/sendmail', {
-      method: 'POST',
-      body: formDataToSend,
-    });
+    try {
+      const response = await fetch("/api/sendmail", {
+        method: "POST",
+        body: formDataToSend,
+      });
 
-    const result = await response.json();
-    console.log('Email sent successfully:', result);
+      const result = await response.json();
+      if (result.success) {
+        setModalMessage("Votre soumission a été envoyée avec succès!");
+        setFormData({
+          firstName: "",
+          lastName: "",
+          adresse: "",
+          ville: "",
+          codePostal: "",
+          email: "",
+          telephone: "",
+          anneesExperiences: "",
+          domaineExpertise: "",
+          posteDesire: "",
+          message: "",
+        });
+        setFile(null);
+      } else {
+        setModalMessage(`Error: ${result.error}`);
+      }
+    } catch (error) {
+      setModalMessage("Error: Something went wrong. Please try again.");
+    }
+    setIsModalOpen(true);
   };
 
   return (
@@ -156,13 +186,20 @@ const EmailForm = () => {
                   onChange={handleChange}
                   className="flex h-24 text-white rounded-none border-[#ffffff9c] border-t-0 border-x-0 border bg-transparent px-3 py-2 text-sm w-full"
                 ></textarea>
-                <input
-                  type="file"
-                  name="file"
-                  accept=".pdf"
-                  onChange={handleFileChange}
-                  className="flex h-10 text-white rounded-none border-[#ffffff9c] border-t-0 border-x-0 border bg-transparent px-3 py-2 text-sm w-full"
-                />
+                <div className="file-input-container">
+                  <input
+                    type="file"
+                    id="file"
+                    name="file"
+                    accept=".pdf"
+                    onChange={handleFileChange}
+                    className="custom-file-input"
+                  />
+                  <label htmlFor="file" className="file-input-label">
+                    {file ? file.name : "Déposer CV "} 
+                    <span className="file-input-info"> Doc, pdf (5 Mo. max)</span>
+                  </label>
+                </div>
               </div>
               <div className="flex w-full flex-row items-center gap-2">
                 <button
@@ -176,6 +213,11 @@ const EmailForm = () => {
           </div>
         </div>
       </div>
+      <Modal
+        isOpen={isModalOpen}
+        message={modalMessage}
+        onClose={() => setIsModalOpen(false)}
+      />
     </section>
   );
 };

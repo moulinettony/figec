@@ -44,3 +44,43 @@ body {
     text-wrap: balance;
   }
 }
+
+.file-input-container {
+  position: relative;
+  width: 100%;
+}
+
+.custom-file-input {
+  display: none; /* Hide the file input */
+}
+
+.file-input-info {
+  color: #00CCFF; /* Sky blue color for additional info */
+  font-size: 12px; /* Slightly smaller font size */
+  margin-left: 5px;
+}
+
+.file-input-label {
+  height: 40px; /* Match the height */
+  width: 100%; /* Full width */
+  display: flex; /* Flexbox for alignment */
+  align-items: center; /* Center vertically */
+  color: white; /* Text color */
+  background-color: transparent; /* Background color */
+  border: 1px solid #ffffff9c; /* Border color */
+  border-top: 0; /* Remove top border */
+  border-left: 0; /* Remove left border */
+  border-right: 0; /* Remove right border */
+  font-size: 14px; /* Font size */
+  cursor: pointer; /* Pointer cursor */
+  padding: 0 15px; /* Padding */
+  box-sizing: border-box; /* Box sizing */
+}
+
+.file-input-container:hover .file-input-label {
+  background-color: rgba(255, 255, 255, 0.1); /* Label background on hover */
+}
+
+.file-input-container:focus-within .file-input-label {
+  border-color: white; /* Border color on focus */
+}
