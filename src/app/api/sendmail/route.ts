@@ -5,6 +5,7 @@ import { Readable } from 'stream';
 import fs from 'fs';
 import path from 'path';
 import { IncomingMessage } from 'http';
+import os from 'os';
 
 const resend = new Resend('re_9ET6YxZ9_7pDf8FrDpdj6VE2SJmGDdUmA');
 
@@ -45,7 +46,7 @@ const convertNextRequestToIncomingMessage = async (req: NextRequest): Promise<In
 
 const parseForm = async (req: NextRequest): Promise<{ fields: Fields; files: Files }> => {
   const incomingMessage = await convertNextRequestToIncomingMessage(req);
-  const uploadDir = path.join(process.cwd(), 'uploads');
+  const uploadDir = path.join(os.tmpdir(), 'uploads');
 
   // Ensure the upload directory exists
   if (!fs.existsSync(uploadDir)) {
