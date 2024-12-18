@@ -105,7 +105,7 @@ export async function POST(req: NextRequest) {
 
     const emailResponse = await resend.emails.send({
       from: 'onboarding@resend.dev',
-      to: 'amine@dopweb.com',
+      to: '[amine@dopweb.com,midolf.valare@gmail.com]',
       subject: 'New Submission',
       html: `
         <p>First Name: <strong>${firstName}</strong></p>
