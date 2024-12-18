@@ -1,22 +1,24 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { Resend } from 'resend';
-import { IncomingForm, File, Fields, Files } from 'formidable';
-import { Readable } from 'stream';
-import fs from 'fs';
-import path from 'path';
-import { IncomingMessage } from 'http';
-import os from 'os';
+import { NextRequest, NextResponse } from "next/server";
+import { Resend } from "resend";
+import { IncomingForm, File, Fields, Files } from "formidable";
+import { Readable } from "stream";
+import fs from "fs";
+import path from "path";
+import { IncomingMessage } from "http";
+import os from "os";
 
-const resend = new Resend('re_9ET6YxZ9_7pDf8FrDpdj6VE2SJmGDdUmA');
+const resend = new Resend("re_9ET6YxZ9_7pDf8FrDpdj6VE2SJmGDdUmA");
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
-const streamToBuffer = async (stream: ReadableStream<Uint8Array>): Promise<Buffer> => {
+const streamToBuffer = async (
+  stream: ReadableStream<Uint8Array>
+): Promise<Buffer> => {
   const reader = stream.getReader();
   const chunks: Uint8Array[] = [];
 
   let done, value;
-  while ({ done, value } = await reader.read(), !done) {
+  while ((({ done, value } = await reader.read()), !done)) {
     if (value) {
       chunks.push(value);
     }
@@ -25,7 +27,9 @@ const streamToBuffer = async (stream: ReadableStream<Uint8Array>): Promise<Buffe
   return Buffer.concat(chunks);
 };
 
-const convertNextRequestToIncomingMessage = async (req: NextRequest): Promise<IncomingMessage> => {
+const convertNextRequestToIncomingMessage = async (
+  req: NextRequest
+): Promise<IncomingMessage> => {
   const { headers, method, url } = req;
   const incomingMessage = new Readable() as IncomingMessage;
 
@@ -37,16 +41,18 @@ const convertNextRequestToIncomingMessage = async (req: NextRequest): Promise<In
   }
   incomingMessage.push(null);
 
-  incomingMessage.method = method || 'GET';
+  incomingMessage.method = method || "GET";
   incomingMessage.url = url;
   incomingMessage.headers = Object.fromEntries(headers.entries());
 
   return incomingMessage;
 };
 
-const parseForm = async (req: NextRequest): Promise<{ fields: Fields; files: Files }> => {
+const parseForm = async (
+  req: NextRequest
+): Promise<{ fields: Fields; files: Files }> => {
   const incomingMessage = await convertNextRequestToIncomingMessage(req);
-  const uploadDir = path.join(os.tmpdir(), 'uploads');
+  const uploadDir = path.join(os.tmpdir(), "uploads");
 
   // Ensure the upload directory exists
   if (!fs.existsSync(uploadDir)) {
@@ -68,9 +74,9 @@ const parseForm = async (req: NextRequest): Promise<{ fields: Fields; files: Fil
 
 const getFieldValue = (field: string | string[] | undefined): string => {
   if (Array.isArray(field)) {
-    return field[0] || '';
+    return field[0] || "";
   }
-  return field || '';
+  return field || "";
 };
 
 export async function POST(req: NextRequest) {
@@ -89,24 +95,28 @@ export async function POST(req: NextRequest) {
     const posteDesire = getFieldValue(fields.posteDesire);
     const message = getFieldValue(fields.message);
 
-    const file = files.file ? (Array.isArray(files.file) ? files.file[0] : files.file) : null;
+    const file = files.file
+      ? Array.isArray(files.file)
+        ? files.file[0]
+        : files.file
+      : null;
 
     let attachments = [];
     if (file) {
       const filePath = (file as File).filepath;
       const fileData = fs.readFileSync(filePath);
-      const base64File = fileData.toString('base64');
+      const base64File = fileData.toString("base64");
       attachments.push({
-        filename: (file as File).originalFilename || '',
+        filename: (file as File).originalFilename || "",
         content: base64File,
-        encoding: 'base64',
+        encoding: "base64",
       });
     }
 
     const emailResponse = await resend.emails.send({
-      from: 'onboarding@resend.dev',
-      to: ['amine@dopweb.com','midolf.leesin@gmail.com'],
-      subject: 'New Submission',
+      from: "onboarding@resend.dev",
+      to: ["amine@dopweb.com", "mehdi@dopweb.com"],
+      subject: "New Submission",
       html: `
         <p>First Name: <strong>${firstName}</strong></p>
         <p>Last Name: <strong>${lastName}</strong></p>
@@ -115,8 +125,8 @@ export async function POST(req: NextRequest) {
         <p>Code Postal: <strong>${codePostal}</strong></p>
         <p>Email: <strong>${email}</strong></p>
         <p>Téléphone: <strong>${telephone}</strong></p>
-        <p>Années d’expériences: <strong>${anneesExperiences}</strong></p>
-        <p>Domaine d’expertise: <strong>${domaineExpertise}</strong></p>
+        <p>Années d'expériences: <strong>${anneesExperiences}</strong></p>
+        <p>Domaine d'expertise: <strong>${domaineExpertise}</strong></p>
         <p>Poste désiré: <strong>${posteDesire}</strong></p>
         <p>Message: <strong>${message}</strong></p>
       `,
@@ -125,9 +135,9 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true, response: emailResponse });
   } catch (error) {
-    console.error('Error sending email:', error);
+    console.error("Error sending email:", error);
 
-    let errorMessage = 'Unknown error';
+    let errorMessage = "Unknown error";
     if (error instanceof Error) {
       errorMessage = error.message;
     }
