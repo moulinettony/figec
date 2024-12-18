@@ -7,7 +7,7 @@ import path from "path";
 import { IncomingMessage } from "http";
 import os from "os";
 
-const resend = new Resend("re_9ET6YxZ9_7pDf8FrDpdj6VE2SJmGDdUmA");
+const resend = new Resend("re_AfamS1mB_PtDSYdvURWxi67pC2QtRPyHu");
 
 export const dynamic = "force-dynamic";
 
@@ -115,8 +115,7 @@ export async function POST(req: NextRequest) {
 
     const emailResponse = await resend.emails.send({
       from: "onboarding@resend.dev",
-      to: "amine@dopweb.com",
-      cc: "mehdi@dopweb.com",
+      to: ["mehdi@dopweb.com", "amine@dopweb.com"],
       subject: "New Submission",
       html: `
         <p>First Name: <strong>${firstName}</strong></p>
