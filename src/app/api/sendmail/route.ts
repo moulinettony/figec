@@ -114,10 +114,11 @@ export async function POST(req: NextRequest) {
     }
 
     const emailResponse = await resend.emails.send({
-      from: "no-reply@figecmaroc.com",
-      cc: ["mehdi@dopweb.com"],
-      to: ["amine@dopweb.com"],
-      subject: "New Submission",
+      from: "Candidature@figecmaroc.com",
+      cc: ["Achaimaa.berrak@figec-maroc.net"],
+      bcc: ["amine@dopweb.com"],
+      to: ["Karim.bennouna@figec-maroc.net"],
+      subject: "Nouvelle Candidature",
       html: `
         <p>First Name: <strong>${firstName}</strong></p>
         <p>Last Name: <strong>${lastName}</strong></p>
